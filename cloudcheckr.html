@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudCheckr | CloudCap</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="cloudcheckr.html">CloudCheckr</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="upload">
+            <h1>CloudCheckr</h1>
+            <p>Upload your AWS CloudFormation and cost estimation files for analysis.</p>
+            <form id="uploadForm">
+                <label for="cloudFormationFile">AWS CloudFormation File:</label>
+                <input type="file" id="cloudFormationFile" name="cloudFormationFile" accept=".yaml,.json" required>
+                
+                <label for="costEstimationFile">Cost Estimation File:</label>
+                <input type="file" id="costEstimationFile" name="costEstimationFile" accept=".yaml,.json" required>
+                
+                <button type="submit">Analyze</button>
+            </form>
+            <div id="loadingState" style="display: none;">
+                <p>Analyzing...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 CloudCap. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
