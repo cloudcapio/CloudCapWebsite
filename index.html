@@ -4,39 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CloudCap</title>
-    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="cloudcheckr.html">CloudCheckr</a></li>
+<body class="bg-gray-100">
+    <header class="bg-white shadow">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center">
+                <img src="CloudCapLogo.png" alt="CloudCap Logo" class="h-8 mr-2">
+                <span class="text-xl font-bold text-gray-800">CloudCap</span>
+            </a>
+            <ul class="flex space-x-4 font-bold">
+                <li><a href="cloudcheckr.html" class="text-gray-800 hover:text-blue-600">CloudCheckr</a></li>
+                <li><a href="faq.html" class="text-gray-800 hover:text-blue-600">FAQ</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
-        <section id="hero">
-            <h1>Welcome to CloudCap</h1>
-            <p>Simplify your AWS cost estimation and architecture validation.</p>
-            <a href="cloudcheckr.html" class="cta-button">Get Started</a>
+        <section id="hero" class="bg-blue-600 text-white py-20">
+            <div class="container mx-auto px-6">
+                <h1 class="text-4xl font-bold mb-4">Welcome to CloudCap</h1>
+                <p class="text-xl mb-8">Simplify your AWS cost estimation and architecture validation.</p>
+                <a href="cloudcheckr.html" class="bg-white text-blue-600 font-bold py-3 px-6 rounded-md hover:bg-blue-100">Get Started</a>
+            </div>
         </section>
 
-        <section id="features">
-            <h2>Key Features</h2>
-            <ul>
-                <li>Accurate cost estimation</li>
-                <li>Architecture validation</li>
-                <li>Easy-to-use interface</li>
-            </ul>
+        <section id="features" class="py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold mb-12 text-center">Key Features</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white shadow rounded-md p-6 feature-item">
+                        <h3 class="text-xl font-bold mb-4">Accurate Cost Estimation</h3>
+                        <p class="text-gray-600">Get precise cost estimations for your AWS architecture.</p>
+                    </div>
+                    <div class="bg-white shadow rounded-md p-6 feature-item">
+                        <h3 class="text-xl font-bold mb-4">Architecture Validation</h3>
+                        <p class="text-gray-600">Ensure your architecture aligns with best practices.</p>
+                    </div>
+                    <div class="bg-white shadow rounded-md p-6 feature-item">
+                        <h3 class="text-xl font-bold mb-4">Easy to Use</h3>
+                        <p class="text-gray-600">Intuitive interface for seamless cost estimation.</p>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
 
-    <footer>
-        <p>&copy; 2023 CloudCap. All rights reserved.</p>
+    <footer class="bg-gray-800 text-white py-6 mt-auto">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2023 CloudCap. All rights reserved.</p>
+        </div>
     </footer>
-
-    <script src="script.js"></script>
 </body>
 </html>
