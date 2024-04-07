@@ -6,3 +6,7 @@ body {
     transform: translateY(-5px);
     transition: transform 0.3s ease;
 }
+
+.feature-item:hover {
+    transform: translateY(-5px);
+}
