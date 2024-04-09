@@ -10,16 +10,34 @@
 </head>
 <body class="bg-gray-100">
     <header class="bg-white shadow">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="index.html" class="flex items-center">
-                <img src="CloudCapLogo.png" alt="CloudCap Logo" class="h-8 mr-2">
-                <span class="text-xl font-bold text-gray-800">CloudCap</span>
-            </a>
-            <ul class="flex space-x-4 font-bold">
-                <li><a href="cloudcheckr.html" class="text-gray-800 hover:text-blue-600">CloudCheckr</a></li>
-                <li><a href="faq.html" class="text-gray-800 hover:text-blue-600">FAQ</a></li>
-                <li><a href="contact.html" class="text-gray-800 hover:text-blue-600">Contact</a></li>
-            </ul>
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="flex items-center">
+                    <img src="CloudCapLogo.png" alt="CloudCap Logo" class="h-8 mr-2">
+                    <span class="text-xl font-bold text-gray-800">CloudCap</span>
+                </a>
+                <div class="md:hidden">
+                    <button id="navbar-toggle" class="text-gray-500 hover:text-gray-600 focus:outline-none focus:text-gray-600" aria-label="Toggle menu">
+                        <svg viewBox="0 0 24 24" class="h-6 w-6 fill-current">
+                            <path fill-rule="evenodd" d="M3 5h18a1 1 0 110 2H3a1 1 0 110-2zm0 6h18a1 1 0 110 2H3a1 1 0 110-2zm0 6h18a1 1 0 110 2H3a1 1 0 110-2z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <nav id="navbar-menu" class="hidden md:flex md:items-center md:space-x-4 font-bold">
+                    <a href="cloudcheckr.html" class="text-gray-800 hover:text-blue-600 py-2 px-4">CloudCheckr</a>
+                    <a href="faq.html" class="text-gray-800 hover:text-blue-600 py-2 px-4">FAQ</a>
+                    <a href="contact.html" class="text-gray-800 hover:text-blue-600 py-2 px-4">Contact</a>
+                    <a href="team.html" class="text-gray-800 hover:text-blue-600 py-2 px-4">Team</a>
+                </nav>
+            </div>
+        </div>
+        <nav id="mobile-menu" class="md:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="cloudcheckr.html" class="block text-gray-800 hover:text-blue-600 py-2">CloudCheckr</a>
+                <a href="faq.html" class="block text-gray-800 hover:text-blue-600 py-2">FAQ</a>
+                <a href="contact.html" class="block text-gray-800 hover:text-blue-600 py-2">Contact</a>
+                <a href="team.html" class="block text-gray-800 hover:text-blue-600 py-2">Team</a>
+            </div>
         </nav>
     </header>
 
@@ -54,8 +72,34 @@
     </main>
 
     <footer class="bg-gray-800 text-white py-6 mt-auto">
-        <div class="container mx-auto px-6 text-center">
-            <p>&copy; 2024 CloudCap. All rights reserved.</p>
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">CloudCap</h3>
+                    <p>&copy; 2024 CloudCap. All rights reserved.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Social Media</h3>
+                    <ul class="social-list">
+                      <li>
+                        <img src="logos/X_logo-white.png" alt="X Logo" class="logo">
+                        <a href="https://twitter.com/CloudCapNYC" class="hover:text-blue-300">Twitter</a>
+                      </li>
+                      <li>
+                        <img src="logos/LI-In-Bug.png" alt="LinkedIn Logo" class="logo">
+                        <a href="https://www.linkedin.com/company/cl" class="hover:text-blue-300">LinkedIn</a>
+                      </li>
+                    </ul>
+                  </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Contact Us</h3>
+                    <ul class="space-y-2">
+                        <li>Email: support@cloudcap.com</li>
+                        <li>Phone: (917)270-3250</li>
+                        <li>Address: 3009 Broadway, New York, NY 10027</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </footer>
 </body>

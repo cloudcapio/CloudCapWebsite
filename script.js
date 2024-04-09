@@ -7,13 +7,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const cloudFormationFileStatus = document.getElementById('cloudFormationFileStatus');
     const costEstimationFileStatus = document.getElementById('costEstimationFileStatus');
     const loadingState = document.getElementById('loadingState');
+    const navbarToggle = document.getElementById('navbar-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
 
     // Prevent default drag behaviors
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         cloudFormationDropzone.addEventListener(eventName, preventDefaults, false);
         costEstimationDropzone.addEventListener(eventName, preventDefaults, false);
     });
-
+    
+    
     // Highlight drop zone when item is dragged over it
     ['dragenter', 'dragover'].forEach(eventName => {
         cloudFormationDropzone.addEventListener(eventName, highlightCloudFormation, false);
@@ -37,6 +40,11 @@ document.addEventListener('DOMContentLoaded', function() {
         costEstimationFile.click();
     });
 
+    navbarToggle.addEventListener('click', function () {
+        mobileMenu.classList.toggle('hidden');
+    });
+
+    
     // Handle file selection via input element
     cloudFormationFile.addEventListener('change', handleCloudFormationFileSelect, false);
     costEstimationFile.addEventListener('change', handleCostEstimationFileSelect, false);

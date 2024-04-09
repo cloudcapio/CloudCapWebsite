@@ -10,3 +10,24 @@ body {
 .feature-item:hover {
     transform: translateY(-5px);
 }
+
+.logo {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+    margin-right: 0.5em;
+  }
+  
+  .social-list {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column; /* Display list items vertically */
+    align-items: flex-start; /* Align items to the left */
+  }
+  
+  .social-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem; /* Add some spacing between list items */
+  }
