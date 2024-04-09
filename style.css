@@ -32,30 +32,8 @@ body {
     margin-bottom: 0.5rem; /* Add some spacing between list items */
   }
 
-  @media (max-width: 767px) {
-    #navbar-menu {
-      display: none;
-    }
-  
-    #mobile-menu {
-      display: none;
-    }
-  
-    #mobile-menu.active {
-      display: block;
-    }
+@media (max-width: 767px) {
+  #navbar-menu {
+    display: none;
   }
-
-  @media (max-width: 1023px) {
-    #navbar-menu {
-      display: none;
-    }
-  
-    #mobile-menu {
-      display: none;
-    }
-  
-    #mobile-menu.active {
-      display: block;
-    }
-  }
+}
