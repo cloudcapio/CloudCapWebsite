@@ -5,7 +5,7 @@ document.getElementById('contactForm').addEventListener('submit', async (event) 
     const data = Object.fromEntries(formData.entries());
   
     try {
-      const response = await fetch('YOUR_SERVERLESS_FUNCTION_URL', {
+      const response = await fetch('https://hic85g7zjg.execute-api.us-east-1.amazonaws.com/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
