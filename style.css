@@ -1,5 +1,8 @@
 body {
     font-family: 'Lato', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 .feature-item:hover {
@@ -11,13 +14,19 @@ body {
     transform: translateY(-5px);
 }
 
-.logo {
-    width: 1em;
-    height: 1em;
+.logo-linkedin {
+    width: 1.75em;
+    height: 1.5em;
     vertical-align: middle;
     margin-right: 0.5em;
   }
-  
+  .logo{
+    width: 1.5em;
+    height: 1.5em;
+    vertical-align: middle;
+    margin-right: 0.5em;
+  }
+
   .social-list {
     list-style-type: none;
     padding: 0;
@@ -31,9 +40,42 @@ body {
     align-items: center;
     margin-bottom: 0.5rem; /* Add some spacing between list items */
   }
+  .profile-social-logo {
+    width: 1.5em;
+    height: 1.5em;
+    vertical-align: middle;
+  }
+  .profile-social-logo-linkedin {
+    width: 1.75em;
+    height: 1.5em;
+    vertical-align: middle;
+  }
 
+  
+  .profile-social-list {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  
+  .profile-social-list li {
+    margin: 0 0.5rem;
+  }
+  
 @media (max-width: 767px) {
   #navbar-menu {
     display: none;
   }
+}
+
+main {
+  min-height: calc(100vh - 88px - 204px);
+  min-width: 80%;
+}
+
+
+footer {
+  margin-top: auto;
 }
