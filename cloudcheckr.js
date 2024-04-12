@@ -53,14 +53,37 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Simulate loading state
-        loadingState.style.display = 'block';
+        // Create FormData object and append files
+        const formData = new FormData();
+        formData.append('cloudFormationFile', cloudFormationFiles[0]);
+        formData.append('costEstimationFile', costEstimationFiles[0]);
 
-        // Simulate file upload and analysis (replace with actual API call)
-        setTimeout(function() {
-            // Redirect to success page
-            window.location.href = 'success.html';
-        }, 2000);
+        // Show loading state
+        loadingState.style.display = 'block';
+//
+        // Send POST request to API Gateway
+        fetch('https://cezlv7eawd.execute-api.us-east-1.amazonaws.com/prod', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response from API Gateway
+            if (data.statusCode === 200) {
+                alert(data.body.message);
+                // Redirect to success page or update UI as needed
+            } else {
+                alert(data.body.message + '\n' + data.body.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred during the analysis.');
+        })
+        .finally(() => {
+            // Hide loading state
+            loadingState.style.display = 'none';
+        });
     });
 
     function preventDefaults(event) {
