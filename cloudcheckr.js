@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loadingState.style.display = 'block';
 //
         // Send POST request to API Gateway
-        fetch('https://cezlv7eawd.execute-api.us-east-1.amazonaws.com/prod', {
+        fetch('https://cezlv7eawd.execute-api.us-east-1.amazonaws.com/cloudcheckr', {
             method: 'POST',
             body: formData
         })
