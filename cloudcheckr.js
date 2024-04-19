@@ -58,36 +58,49 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append('cfn_template', cloudFormationFiles[0]);
         formData.append('estimates', costEstimationFiles[0]);
 
-        // Show loading state
-        loadingState.style.display = 'block';
-        //
-        // Send POST request to API Gateway
-        fetch('https://s99cj4ct84.execute-api.us-east-2.amazonaws.com/call', {
-            method: 'POST',
-            body: JSON.stringify(formData),
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                // Handle the response from API Gateway
-                if (data.statusCode === 200) {
-                    alert(data.body.result);
-                    // Redirect to success page or update UI as needed
-                } else {
-                    alert(data.body.result + '\n' + data.body.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred during the analysis.');
-            })
-            .finally(() => {
-                // Hide loading state
-                loadingState.style.display = 'none';
-            });
+        let readerCfn = new FileReader();
+        readerCfn.readAsText(cloudFormationFiles[0]);
+        readerCfn.onload = function () {
+            let readerEstimates = new FileReader();
+            readerEstimates.readAsText(costEstimationFiles[0]);
+            readerEstimates.onload = function () {
+                const payload = { 'cfn_template': readerCfn.result, 'estimates': readerEstimates.result };
+                // Show loading state
+                loadingState.style.display = 'block';
+                console.log(payload);
+                //
+                // Send POST request to API Gateway
+                fetch('https://s99cj4ct84.execute-api.us-east-2.amazonaws.com/call', {
+                    method: 'POST',
+                    body: JSON.stringify(payload),
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data)
+                        // Handle the response from API Gateway
+                        if (data.statusCode === 200) {
+                            alert(data.result);
+                            // Redirect to success page or update UI as needed
+                        } else {
+                            alert(data.result + '\n' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred during the analysis.');
+                    })
+                    .finally(() => {
+                        // Hide loading state
+                        loadingState.style.display = 'none';
+                    });
+            }
+        }
+
+
     });
 
     function preventDefaults(event) {
