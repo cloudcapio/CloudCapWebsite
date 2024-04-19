@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const uploadForm = document.getElementById('uploadForm');
     const cloudFormationDropzone = document.getElementById('cloudFormationDropzone');
     const costEstimationDropzone = document.getElementById('costEstimationDropzone');
@@ -30,10 +30,10 @@ document.addEventListener('DOMContentLoaded', function() {
     costEstimationDropzone.addEventListener('drop', handleCostEstimationDrop, false);
 
     // Handle file selection via click
-    cloudFormationDropzone.addEventListener('click', function() {
+    cloudFormationDropzone.addEventListener('click', function () {
         cloudFormationFile.click();
     });
-    costEstimationDropzone.addEventListener('click', function() {
+    costEstimationDropzone.addEventListener('click', function () {
         costEstimationFile.click();
     });
 
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
     cloudFormationFile.addEventListener('change', handleCloudFormationFileSelect, false);
     costEstimationFile.addEventListener('change', handleCostEstimationFileSelect, false);
 
-    uploadForm.addEventListener('submit', function(event) {
+    uploadForm.addEventListener('submit', function (event) {
         event.preventDefault();
 
         // Perform client-side validation
@@ -55,35 +55,39 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Create FormData object and append files
         const formData = new FormData();
-        formData.append('cloudFormationFile', cloudFormationFiles[0]);
-        formData.append('costEstimationFile', costEstimationFiles[0]);
+        formData.append('cfn_template', cloudFormationFiles[0]);
+        formData.append('estimates', costEstimationFiles[0]);
 
         // Show loading state
         loadingState.style.display = 'block';
-//
+        //
         // Send POST request to API Gateway
-        fetch('https://cezlv7eawd.execute-api.us-east-1.amazonaws.com/cloudcheckr', {
+        fetch('https://s99cj4ct84.execute-api.us-east-2.amazonaws.com/call', {
             method: 'POST',
-            body: formData
+            body: JSON.stringify(formData),
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
         })
-        .then(response => response.json())
-        .then(data => {
-            // Handle the response from API Gateway
-            if (data.statusCode === 200) {
-                alert(data.body.message);
-                // Redirect to success page or update UI as needed
-            } else {
-                alert(data.body.message + '\n' + data.body.error);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred during the analysis.');
-        })
-        .finally(() => {
-            // Hide loading state
-            loadingState.style.display = 'none';
-        });
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response from API Gateway
+                if (data.statusCode === 200) {
+                    alert(data.body.result);
+                    // Redirect to success page or update UI as needed
+                } else {
+                    alert(data.body.result + '\n' + data.body.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred during the analysis.');
+            })
+            .finally(() => {
+                // Hide loading state
+                loadingState.style.display = 'none';
+            });
     });
 
     function preventDefaults(event) {
