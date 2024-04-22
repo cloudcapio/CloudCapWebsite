@@ -1,107 +1,176 @@
 document.addEventListener('DOMContentLoaded', function () {
     const uploadForm = document.getElementById('uploadForm');
     const cloudFormationDropzone = document.getElementById('cloudFormationDropzone');
-    const costEstimationDropzone = document.getElementById('costEstimationDropzone');
     const cloudFormationFile = document.getElementById('cloudFormationFile');
-    const costEstimationFile = document.getElementById('costEstimationFile');
     const cloudFormationFileStatus = document.getElementById('cloudFormationFileStatus');
-    const costEstimationFileStatus = document.getElementById('costEstimationFileStatus');
     const loadingState = document.getElementById('loadingState');
 
     // Prevent default drag behaviors
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         cloudFormationDropzone.addEventListener(eventName, preventDefaults, false);
-        costEstimationDropzone.addEventListener(eventName, preventDefaults, false);
     });
 
     // Highlight drop zone when item is dragged over it
     ['dragenter', 'dragover'].forEach(eventName => {
         cloudFormationDropzone.addEventListener(eventName, highlightCloudFormation, false);
-        costEstimationDropzone.addEventListener(eventName, highlightCostEstimation, false);
     });
 
     ['dragleave', 'drop'].forEach(eventName => {
         cloudFormationDropzone.addEventListener(eventName, unhighlightCloudFormation, false);
-        costEstimationDropzone.addEventListener(eventName, unhighlightCostEstimation, false);
     });
 
     // Handle dropped files
     cloudFormationDropzone.addEventListener('drop', handleCloudFormationDrop, false);
-    costEstimationDropzone.addEventListener('drop', handleCostEstimationDrop, false);
 
     // Handle file selection via click
     cloudFormationDropzone.addEventListener('click', function () {
         cloudFormationFile.click();
     });
-    costEstimationDropzone.addEventListener('click', function () {
-        costEstimationFile.click();
-    });
 
     // Handle file selection via input element
     cloudFormationFile.addEventListener('change', handleCloudFormationFileSelect, false);
-    costEstimationFile.addEventListener('change', handleCostEstimationFileSelect, false);
+
+    let estimateTemplateData;
+    let cloudFormationData;
 
     uploadForm.addEventListener('submit', function (event) {
         event.preventDefault();
 
         // Perform client-side validation
         const cloudFormationFiles = cloudFormationFile.files;
-        const costEstimationFiles = costEstimationFile.files;
 
-        if (cloudFormationFiles.length !== 1 || costEstimationFiles.length !== 1) {
-            alert('Please select both CloudFormation and Cost Estimation files.');
+        if (cloudFormationFiles.length !== 1) {
+            alert('Please provide a CloudFormation file.');
             return;
         }
 
         // Create FormData object and append files
         const formData = new FormData();
         formData.append('cfn_template', cloudFormationFiles[0]);
-        formData.append('estimates', costEstimationFiles[0]);
-
         let readerCfn = new FileReader();
         readerCfn.readAsText(cloudFormationFiles[0]);
         readerCfn.onload = function () {
-            let readerEstimates = new FileReader();
-            readerEstimates.readAsText(costEstimationFiles[0]);
-            readerEstimates.onload = function () {
-                const payload = { 'cfn_template': readerCfn.result, 'estimates': readerEstimates.result };
-                // Show loading state
-                loadingState.style.display = 'block';
-                console.log(payload);
-                //
-                // Send POST request to API Gateway
-                fetch('https://s99cj4ct84.execute-api.us-east-2.amazonaws.com/call', {
-                    method: 'POST',
-                    body: JSON.stringify(payload),
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+            cloudFormationData = readerCfn.result
+            const payload = { 'cfn_template': cloudFormationData, 'generateEstimatesTemplate': 1 };
+            // Show loading state
+            genTempalateState.style.display = 'block';
+            console.log(payload);
+            //
+            // Send POST request to API Gateway
+            fetch('https://s99cj4ct84.execute-api.us-east-2.amazonaws.com/call', {
+                method: 'POST',
+                body: JSON.stringify(payload),
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    estimateTemplateData = data.result
+                    const dynamicContainer = document.getElementById('dynamicInputs');
+
+                    // Looping through each key to create inputs
+                    for (const key in estimateTemplateData) {
+                        console.log(key)
+                        createInputs(dynamicContainer, key, estimateTemplateData[key].NREQUESTS);
+                    }
+                    analyzeButton.style.display = 'block';
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data)
-                        // Handle the response from API Gateway
-                        if (data.statusCode === 200) {
-                            alert(data.result);
-                            // Redirect to success page or update UI as needed
-                        } else {
-                            alert(data.result + '\n' + data.error);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred during the analysis.');
-                    })
-                    .finally(() => {
-                        // Hide loading state
-                        loadingState.style.display = 'none';
-                    });
-            }
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred during the analysis.');
+                })
+                .finally(() => {
+                    // Hide loading state
+                    genTempalateState.style.display = 'none';
+                });
         }
+    });
+
+    analyzeButton.addEventListener('click', function () {
+
+        const payload = { 'cfn_template': cloudFormationData, 'estimates': jsyaml.dump(collectEstimateValues()) };
+        // Show loading state
+        loadingState.style.display = 'block';
+        console.log(payload);
+        //
+        // Send POST request to API Gateway
+        fetch('https://s99cj4ct84.execute-api.us-east-2.amazonaws.com/call', {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                // Handle the response from API Gateway
+                if (data.statusCode === 200) {
+                    alert(data.result);
+                    // Redirect to success page or update UI as needed
+                } else {
+                    alert(data.result + '\n' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred during the analysis.');
+            })
+            .finally(() => {
+                // Hide loading state
+                loadingState.style.display = 'none';
+            });
 
 
     });
+
+    function collectEstimateValues() {
+        let requestData = {};
+        for (const key in estimateTemplateData) {
+            const inputGroup = document.getElementById(key + '-input-group');
+            const numberInput = inputGroup.querySelector('input[type="number"]');
+            requestData[key] = { "nrequests": parseInt(numberInput.value) };
+        }
+        return requestData
+    }
+    // Function to create inputs using Tailwind CSS
+    function createInputs(container, name, value) {
+        const groupDiv = document.createElement('div');
+        groupDiv.className = 'mb-4 p-2 bg-gray-100 rounded-lg'; // Tailwind classes for spacing and styling
+        groupDiv.id = name + '-input-group'; // Assign an ID to each group
+
+        const label = document.createElement('label');
+        label.textContent = name + ' Requests: ';
+        label.className = 'block text-sm font-medium text-gray-700'; // Tailwind classes for labels
+        groupDiv.appendChild(label);
+
+        const numberInput = document.createElement('input');
+        numberInput.type = 'number';
+        numberInput.className = 'mt-1 block w-full px-3 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'; // Tailwind classes for number input
+        numberInput.min = 0;
+        numberInput.max = 1000000;
+        numberInput.value = value;
+        numberInput.oninput = function () {
+            rangeInput.value = numberInput.value; // Sync the slider with the number input
+        };
+        groupDiv.appendChild(numberInput);
+
+        const rangeInput = document.createElement('input');
+        rangeInput.type = 'range';
+        rangeInput.className = 'mt-1 block w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer'; // Tailwind classes for range input
+        rangeInput.min = 0;
+        rangeInput.max = 1000000;
+        rangeInput.value = value;
+        rangeInput.oninput = function () {
+            numberInput.value = rangeInput.value; // Sync the number input with the slider
+        };
+        groupDiv.appendChild(rangeInput);
+
+        container.appendChild(groupDiv);
+    }
 
     function preventDefaults(event) {
         event.preventDefault();
