@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return requestData
     }
-    // Function to create inputs using Tailwind CSS
+    // Function to create inputs using Tailwind CSS and custom styles for the slider
     function createInputs(container, name, value) {
         const groupDiv = document.createElement('div');
         groupDiv.className = 'mb-4 p-2 bg-gray-100 rounded-lg'; // Tailwind classes for spacing and styling
@@ -154,22 +154,31 @@ document.addEventListener('DOMContentLoaded', function () {
         numberInput.max = 1000000;
         numberInput.value = value;
         numberInput.oninput = function () {
-            rangeInput.value = numberInput.value; // Sync the slider with the number input
+            rangeInput.value = numberInput.value;
+            updateSliderBackground(rangeInput); // Update slider background as the value changes
         };
         groupDiv.appendChild(numberInput);
 
         const rangeInput = document.createElement('input');
         rangeInput.type = 'range';
-        rangeInput.className = 'mt-1 block w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer'; // Tailwind classes for range input
+        rangeInput.className = 'mt-1 block w-full h-2 bg-transparent rounded-lg appearance-none cursor-pointer slider-thumb'; // Tailwind classes and custom class for range input
+        rangeInput.style = `background: linear-gradient(to right, #4f46e5 0%, #4f46e5 ${value / 10000}%, #e5e7eb ${value / 10000}%, #e5e7eb 100%)`; // Initial gradient background
         rangeInput.min = 0;
         rangeInput.max = 1000000;
         rangeInput.value = value;
         rangeInput.oninput = function () {
-            numberInput.value = rangeInput.value; // Sync the number input with the slider
+            numberInput.value = rangeInput.value;
+            updateSliderBackground(rangeInput); // Update slider background as the slider moves
         };
         groupDiv.appendChild(rangeInput);
 
         container.appendChild(groupDiv);
+    }
+
+    // Function to update slider background based on its value
+    function updateSliderBackground(slider) {
+        const percentage = (slider.value - slider.min) / (slider.max - slider.min) * 100;
+        slider.style.background = `linear-gradient(to right, #4f46e5 0%, #4f46e5 ${percentage}%, #e5e7eb ${percentage}%, #e5e7eb 100%)`;
     }
 
     function preventDefaults(event) {
