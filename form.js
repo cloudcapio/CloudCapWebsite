@@ -5,7 +5,7 @@ document.getElementById('contactForm').addEventListener('submit', async (event) 
     const data = Object.fromEntries(formData.entries());
   
     try {
-      const response = await fetch('https://hic85g7zjg.execute-api.us-east-1.amazonaws.com/contact', {
+      const response = await fetch('https://6mr9g30z5f.execute-api.us-east-1.amazonaws.com', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -23,4 +23,4 @@ document.getElementById('contactForm').addEventListener('submit', async (event) 
       console.error('Error:', error);
       alert('Oops! Something went wrong. Please try again later.');
     }
-  });
+  }); 
