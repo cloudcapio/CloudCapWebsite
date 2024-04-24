@@ -35,59 +35,64 @@ document.addEventListener('DOMContentLoaded', function () {
 
     uploadForm.addEventListener('submit', function (event) {
         event.preventDefault();
-
+      
         // Perform client-side validation
         const cloudFormationFiles = cloudFormationFile.files;
-
-        if (cloudFormationFiles.length !== 1) {
-            alert('Please provide a CloudFormation file.');
-            return;
+      
+        if (cloudFormationFiles.length === 0) {
+          // Use the default CloudFormation template if no file is selected
+          cloudFormationData = document.getElementById('defaultTemplate').value;
+          hideCloudFormationDropzone();
+          showDefaultTemplate();
+        } else if (cloudFormationFiles.length === 1) {
+          const file = cloudFormationFiles[0];
+          let readerCfn = new FileReader();
+          readerCfn.readAsText(file);
+          readerCfn.onload = function () {
+            cloudFormationData = readerCfn.result;
+          };
+        } else {
+          alert('Please provide a single CloudFormation file or use the default template.');
+          return;
         }
+      
+        const payload = { 'cfn_template': cloudFormationData, 'generateEstimatesTemplate': 1 };
+        // Show loading state
+        genTempalateState.style.display = 'block';
+        console.log(payload);
+      
+        // Send POST request to API Gateway
+        fetch('https://s99cj4ct84.execute-api.us-east-2.amazonaws.com/call', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then(response => response.json())
+          .then(data => {
+            estimateTemplateData = data.result;
+            const dynamicContainer = document.getElementById('dynamicInputs');
+      
+            // Looping through each key to create inputs
+            for (const key in estimateTemplateData) {
+              console.log(key);
+              createInputs(dynamicContainer, key, estimateTemplateData[key].NREQUESTS);
+            }
+            analyzeButton.style.display = 'block';
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred during the analysis.');
+          })
+          .finally(() => {
+            // Hide loading state
+            genTempalateState.style.display = 'none';
+          });
+      });
 
-        // Create FormData object and append files
-        const formData = new FormData();
-        formData.append('cfn_template', cloudFormationFiles[0]);
-        let readerCfn = new FileReader();
-        readerCfn.readAsText(cloudFormationFiles[0]);
-        readerCfn.onload = function () {
-            cloudFormationData = readerCfn.result
-            const payload = { 'cfn_template': cloudFormationData, 'generateEstimatesTemplate': 1 };
-            // Show loading state
-            genTempalateState.style.display = 'block';
-            console.log(payload);
-            //
-            // Send POST request to API Gateway
-            fetch('https://s99cj4ct84.execute-api.us-east-2.amazonaws.com/call', {
-                method: 'POST',
-                body: JSON.stringify(payload),
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-                .then(response => response.json())
-                .then(data => {
-                    estimateTemplateData = data.result
-                    const dynamicContainer = document.getElementById('dynamicInputs');
-
-                    // Looping through each key to create inputs
-                    for (const key in estimateTemplateData) {
-                        console.log(key)
-                        createInputs(dynamicContainer, key, estimateTemplateData[key].NREQUESTS);
-                    }
-                    analyzeButton.style.display = 'block';
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred during the analysis.');
-                })
-                .finally(() => {
-                    // Hide loading state
-                    genTempalateState.style.display = 'none';
-                });
-        }
-    });
-
+    
     analyzeButton.addEventListener('click', function () {
 
         const payload = { 'cfn_template': cloudFormationData, 'estimates': jsyaml.dump(collectEstimateValues()) };
@@ -106,25 +111,35 @@ document.addEventListener('DOMContentLoaded', function () {
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data)
+                console.log(data);
                 // Handle the response from API Gateway
-                if (data.statusCode === 200) {
-                    alert(data.result);
-                    // Redirect to success page or update UI as needed
+                const responseDataElement = document.getElementById('responseData');
+                if (data.result === 'PASS') {
+                  responseDataElement.innerHTML = `
+                    <div class="bg-green-100 border border-green-400 text-green-700 p-4 rounded-md text-center">
+                      <h2 class="text-xl font-bold mb-2">Analysis Result</h2>
+                      <p>Your estimation is inline with your infrastructure!</p>
+                    </div>
+                  `;
+                } else if (data.result === 'REJECT') {
+                  responseDataElement.innerHTML = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 p-4 rounded-md text-center">
+                      <h2 class="text-xl font-bold mb-2">Analysis Result</h2>
+                      <p>There is an issue with your estimation and infrastructure</p>
+                    </div>
+                  `;
                 } else {
-                    alert(data.result + '\n' + data.error);
+                  responseDataElement.innerHTML = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 p-4 rounded-md text-center">
+                      <h2 class="text-xl font-bold mb-2">Analysis Result</h2>
+                      <p>There is an issue with your estimation and infrastructure</p>
+                    </div>
+                  `;
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred during the analysis.');
-            })
-            .finally(() => {
-                // Hide loading state
+                responseDataElement.scrollIntoView({ behavior: 'smooth' });
+                // Hide the Stage 2 loading state
                 loadingState.style.display = 'none';
-            });
-
-
+              })
     });
 
     function collectEstimateValues() {
@@ -201,12 +216,18 @@ document.addEventListener('DOMContentLoaded', function () {
     function unhighlightCostEstimation() {
         costEstimationDropzone.classList.remove('border-blue-500');
     }
+    
+    function hideCloudFormationDropzone() {
+        const cloudFormationDropzoneContainer = document.querySelector('div[class*="mb-6"]');
+        cloudFormationDropzoneContainer.style.display = 'none';
+      }
 
     function handleCloudFormationDrop(event) {
         const dt = event.dataTransfer;
         const files = dt.files;
         cloudFormationFile.files = files;
         handleFiles(files, cloudFormationFileStatus);
+        hideDefaultTemplate();
     }
 
     function handleCostEstimationDrop(event) {
@@ -219,11 +240,26 @@ document.addEventListener('DOMContentLoaded', function () {
     function handleCloudFormationFileSelect(event) {
         const files = event.target.files;
         handleFiles(files, cloudFormationFileStatus);
+        hideDefaultTemplate();
     }
 
     function handleCostEstimationFileSelect(event) {
         const files = event.target.files;
         handleFiles(files, costEstimationFileStatus);
+    }
+
+    function hideDefaultTemplate() {
+        const defaultTemplateElement = document.getElementById('defaultTemplate');
+        const defaultTemplateLabelElement = document.querySelector('label[for="defaultTemplate"]');
+        defaultTemplateElement.style.display = 'none';
+        defaultTemplateLabelElement.style.display = 'none';
+      }
+
+    function showDefaultTemplate() {
+        const defaultTemplateElement = document.getElementById('defaultTemplate');
+        const defaultTemplateLabelElement = document.querySelector('label[for="defaultTemplate"]');
+        defaultTemplateElement.style.display = 'block';
+        defaultTemplateLabelElement.style.display = 'block';
     }
 
     function handleFiles(files, fileStatus) {
