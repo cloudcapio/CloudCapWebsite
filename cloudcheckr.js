@@ -4,7 +4,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const cloudFormationFile = document.getElementById('cloudFormationFile');
     const cloudFormationFileStatus = document.getElementById('cloudFormationFileStatus');
     const loadingState = document.getElementById('loadingState');
-
+    const tryOwnInfrastructureButton = document.getElementById('tryOwnInfrastructureButton');
+    
     // Prevent default drag behaviors
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         cloudFormationDropzone.addEventListener(eventName, preventDefaults, false);
@@ -35,7 +36,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     uploadForm.addEventListener('submit', function (event) {
         event.preventDefault();
-      
+
+        // Clear previous template inputs
+        const dynamicContainer = document.getElementById('dynamicInputs');
+        dynamicContainer.innerHTML = '';
         // Perform client-side validation
         const cloudFormationFiles = cloudFormationFile.files;
       
@@ -44,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
           cloudFormationData = document.getElementById('defaultTemplate').value;
           hideCloudFormationDropzone();
           showDefaultTemplate();
+          showTryOwnInfrastructureButton();
         } else if (cloudFormationFiles.length === 1) {
           const file = cloudFormationFiles[0];
           let readerCfn = new FileReader();
@@ -91,7 +96,13 @@ document.addEventListener('DOMContentLoaded', function () {
             genTempalateState.style.display = 'none';
           });
       });
-
+      tryOwnInfrastructureButton.addEventListener('click', function () {
+        const responseDataElement = document.getElementById('responseData');
+        responseDataElement.innerHTML = '';
+        hideDefaultTemplate();
+        showCloudFormationDropzone();
+        tryOwnInfrastructureButton.style.display = 'none';
+      });
     
     analyzeButton.addEventListener('click', function () {
 
@@ -196,6 +207,11 @@ document.addEventListener('DOMContentLoaded', function () {
         slider.style.background = `linear-gradient(to right, #4f46e5 0%, #4f46e5 ${percentage}%, #e5e7eb ${percentage}%, #e5e7eb 100%)`;
     }
 
+    function showCloudFormationDropzone() {
+        const cloudFormationDropzoneContainer = document.querySelector('div[class*="mb-6"]');
+        cloudFormationDropzoneContainer.style.display = 'block';
+      }
+
     function preventDefaults(event) {
         event.preventDefault();
         event.stopPropagation();
@@ -261,6 +277,10 @@ document.addEventListener('DOMContentLoaded', function () {
         defaultTemplateElement.style.display = 'block';
         defaultTemplateLabelElement.style.display = 'block';
     }
+    function showTryOwnInfrastructureButton() {
+        const tryOwnInfrastructureButton = document.getElementById('tryOwnInfrastructureButton');
+        tryOwnInfrastructureButton.style.display = 'inline-block';
+      }
 
     function handleFiles(files, fileStatus) {
         if (files.length === 1) {
